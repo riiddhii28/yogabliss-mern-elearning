@@ -1,0 +1,22 @@
+# Optional: Render Blueprint. In Render, "New +" -> "Blueprint" and point it at this repo.
+# Or just create a Web Service manually (see README). Fill secrets in the dashboard.
+services:
+  - type: web
+    name: yogabliss-api
+    runtime: node
+    rootDir: server
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: JWT_EXPIRES_IN
+        value: 7d
+      - key: MONGO_URI
+        sync: false
+      - key: JWT_SECRET
+        sync: false
+      - key: CLIENT_ORIGIN
+        sync: false
