@@ -1,72 +1,51 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext.jsx";
+import { UserData } from "../context/UserContext.jsx";
+import "./Auth.css";
 
 export default function Login() {
-  const { login } = useAuth();
+  const { loginUser, btnLoading } = UserData();
   const navigate = useNavigate();
-  const [form, setForm] = useState({ email: "", password: "" });
-  const [error, setError] = useState("");
-  const [submitting, setSubmitting] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
-  const handleSubmit = async (e) => {
+  function handleSubmit(e) {
     e.preventDefault();
-    setError("");
-    setSubmitting(true);
-    try {
-      await login(form.email, form.password);
-      navigate("/");
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setSubmitting(false);
-    }
-  };
+    loginUser(email, password, navigate);
+  }
 
   return (
-    <div className="mx-auto max-w-md">
-      <div className="card">
-        <h1 className="mb-1 text-2xl font-bold text-brand-700">Welcome back</h1>
-        <p className="mb-6 text-sm text-slate-500">Log in to track your practice.</p>
+    <div className="auth">
+      <h2>Welcome back</h2>
+      <p className="sub">Log in to continue your practice.</p>
 
-        {error && (
-          <div className="mb-4 rounded-lg bg-red-50 px-3 py-2 text-sm text-red-700">{error}</div>
-        )}
+      <form onSubmit={handleSubmit}>
+        <label>Email</label>
+        <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="label" htmlFor="email">Email</label>
-            <input
-              id="email"
-              type="email"
-              className="input"
-              value={form.email}
-              onChange={(e) => setForm({ ...form, email: e.target.value })}
-              required
-            />
-          </div>
-          <div>
-            <label className="label" htmlFor="password">Password</label>
-            <input
-              id="password"
-              type="password"
-              className="input"
-              value={form.password}
-              onChange={(e) => setForm({ ...form, password: e.target.value })}
-              required
-            />
-          </div>
-          <button type="submit" className="btn-primary w-full" disabled={submitting}>
-            {submitting ? "Logging in…" : "Log in"}
-          </button>
-        </form>
+        <label>Password</label>
+        <input
+          type="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
 
-        <p className="mt-4 text-center text-sm text-slate-500">
-          No account?{" "}
-          <Link to="/register" className="font-medium text-brand-600 hover:underline">
-            Sign up
-          </Link>
-        </p>
+        <button className="common-btn" disabled={btnLoading}>
+          {btnLoading ? "Logging in…" : "Login"}
+        </button>
+      </form>
+
+      <p className="switch">
+        No account? <Link to="/register">Sign up</Link>
+      </p>
+
+      <div className="demo">
+        <strong>Try the demo:</strong>
+        <br />
+        Learner — demo@yogabliss.com / demo123
+        <br />
+        Admin — admin@yogabliss.com / admin123
       </div>
     </div>
   );

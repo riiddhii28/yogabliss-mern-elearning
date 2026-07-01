@@ -1,0 +1,76 @@
+/* ---- Base ---- */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Segoe UI", Arial, sans-serif;
+  color: #222;
+  background: #ffffff;
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* App fills the screen so the footer sits at the bottom. */
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.app main {
+  flex: 1;
+}
+
+/* Shared button — green primary action used across the app. */
+.common-btn {
+  background-color: #145a32;
+  color: #fff;
+  padding: 10px 22px;
+  border: none;
+  border-radius: 30px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+.common-btn:hover {
+  background-color: #388e3c;
+  transform: scale(1.04);
+}
+.common-btn.danger {
+  background-color: #c0392b;
+}
+.common-btn.danger:hover {
+  background-color: #a93226;
+}
+.common-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* A soft purple accent button (from the original theme). */
+.accent-btn {
+  background-color: #8a4baf;
+}
+.accent-btn:hover {
+  background-color: #5f357e;
+}
+
+.page {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 60px 20px;
+}
+
+.section-title {
+  font-size: 32px;
+  color: #145a32;
+  text-align: center;
+  margin-bottom: 30px;
+}

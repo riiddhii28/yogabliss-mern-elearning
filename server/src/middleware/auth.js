@@ -30,3 +30,11 @@ export function signToken(userId) {
     expiresIn: process.env.JWT_EXPIRES_IN || "7d",
   });
 }
+
+// Must run after requireAuth. Blocks non-admins.
+export function requireAdmin(req, res, next) {
+  if (req.user?.role !== "admin") {
+    return res.status(403).json({ error: "Admin access only" });
+  }
+  next();
+}

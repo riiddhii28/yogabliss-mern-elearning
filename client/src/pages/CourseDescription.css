@@ -1,0 +1,33 @@
+.course-description {
+  display: flex;
+  gap: 32px;
+  flex-wrap: wrap;
+  max-width: 900px;
+  margin: 0 auto;
+  align-items: flex-start;
+}
+.cd-image {
+  width: 380px;
+  max-width: 100%;
+  height: 240px;
+  object-fit: cover;
+  border-radius: 12px;
+}
+.cd-body {
+  flex: 1;
+  min-width: 260px;
+}
+.cd-body h2 {
+  font-size: 28px;
+  color: #145a32;
+  margin-bottom: 10px;
+}
+.cd-meta {
+  color: #777;
+  margin-bottom: 18px;
+}
+.cd-desc {
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 24px;
+}

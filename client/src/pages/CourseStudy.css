@@ -1,0 +1,103 @@
+.progress-wrap {
+  max-width: 1000px;
+  margin: 0 auto 28px;
+}
+.progress-head {
+  display: flex;
+  justify-content: space-between;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 6px;
+}
+.progress-track {
+  height: 12px;
+  background: #e0efe6;
+  border-radius: 8px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: #145a32;
+  transition: width 0.4s ease;
+}
+
+.study {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  max-width: 1000px;
+  margin: 0 auto;
+}
+.player {
+  flex: 2;
+  min-width: 300px;
+}
+.video {
+  width: 100%;
+  border-radius: 12px;
+  background: #000;
+  margin-bottom: 16px;
+}
+.player h2 {
+  color: #145a32;
+  margin-bottom: 8px;
+}
+.lec-desc {
+  color: #555;
+  line-height: 1.6;
+  margin-bottom: 16px;
+}
+
+.lecture-list {
+  flex: 1;
+  min-width: 240px;
+  background: #f3fbf5;
+  border-radius: 12px;
+  padding: 16px;
+  height: fit-content;
+}
+.lecture-list h3 {
+  color: #145a32;
+  margin-bottom: 12px;
+}
+.lecture-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: left;
+  background: #fff;
+  border: 1px solid #e0efe6;
+  border-radius: 8px;
+  padding: 10px 12px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  transition: border-color 0.2s ease;
+}
+.lecture-item:hover {
+  border-color: #145a32;
+}
+.lecture-item.current {
+  border-color: #145a32;
+  background: #eaf6ee;
+}
+.lecture-item .num {
+  width: 24px;
+  height: 24px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: #145a32;
+  color: #fff;
+  font-size: 13px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.lecture-item .lec-title {
+  flex: 1;
+  font-size: 15px;
+}
+.lecture-item .tick {
+  color: #145a32;
+  font-weight: 700;
+}

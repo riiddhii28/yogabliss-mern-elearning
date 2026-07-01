@@ -1,0 +1,50 @@
+.testimonials {
+  padding: 80px 20px;
+  text-align: center;
+  background: linear-gradient(135deg, #e6f7e6, #c9e4ff);
+}
+.testimonials h2 {
+  font-size: 34px;
+  color: #145a32;
+  margin-bottom: 40px;
+}
+.testimonial-cards {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 28px;
+}
+.testimonial-card {
+  background: #fff;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  padding: 24px;
+  border-radius: 12px;
+  width: 280px;
+  transition: all 0.3s ease;
+}
+.testimonial-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+}
+.testimonial-card .student-image img {
+  width: 84px;
+  height: 84px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 14px;
+}
+.testimonial-card .message {
+  font-size: 15px;
+  color: #444;
+  line-height: 1.5;
+  margin-bottom: 14px;
+}
+.testimonial-card .name {
+  font-size: 18px;
+  font-weight: 700;
+  color: #145a32;
+}
+.testimonial-card .position {
+  font-size: 13px;
+  color: #777;
+}

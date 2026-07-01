@@ -1,0 +1,26 @@
+.site-footer {
+  background-color: #388e3c;
+  color: #fff;
+  padding: 26px 20px;
+  text-align: center;
+}
+.site-footer p {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.site-footer .social-links {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+}
+.site-footer .social-links a {
+  color: #fff;
+  font-size: 24px;
+  display: inline-flex;
+  transition: color 0.3s ease, transform 0.2s ease;
+}
+.site-footer .social-links a:hover {
+  color: #e0ffe0;
+  transform: scale(1.15);
+}

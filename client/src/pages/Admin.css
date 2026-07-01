@@ -1,0 +1,87 @@
+.admin .stat-row {
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  margin-bottom: 40px;
+  flex-wrap: wrap;
+}
+.admin .stat-card {
+  background: #f3fbf5;
+  border-radius: 12px;
+  padding: 22px 40px;
+  text-align: center;
+  color: #555;
+  font-size: 15px;
+}
+.admin .stat-card span {
+  display: block;
+  font-size: 34px;
+  font-weight: 700;
+  color: #145a32;
+}
+
+.admin-grid {
+  display: flex;
+  gap: 28px;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+.admin-form {
+  flex: 1;
+  min-width: 300px;
+  background: #fff;
+  border: 1px solid #e5e5e5;
+  border-radius: 12px;
+  padding: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.admin-form h3 {
+  color: #145a32;
+}
+.admin-form input,
+.admin-form textarea,
+.admin-form select {
+  padding: 10px;
+  border: 1px solid #cdd7cf;
+  border-radius: 8px;
+  font-size: 14px;
+  font-family: inherit;
+}
+.admin-form textarea {
+  min-height: 70px;
+  resize: vertical;
+}
+.file-label {
+  font-size: 13px;
+  color: #666;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.admin-sub {
+  color: #145a32;
+  margin: 20px 0 14px;
+}
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 30px;
+  background: #fff;
+}
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 12px 14px;
+  border-bottom: 1px solid #eee;
+  font-size: 15px;
+}
+.admin-table th {
+  color: #145a32;
+}
+.common-btn.small {
+  padding: 6px 14px;
+  font-size: 13px;
+}

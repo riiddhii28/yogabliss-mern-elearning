@@ -3,36 +3,27 @@ import bcrypt from "bcryptjs";
 
 const userSchema = new mongoose.Schema(
   {
-    name: {
-      type: String,
-      required: [true, "Name is required"],
-      trim: true,
-      maxlength: 80,
-    },
+    name: { type: String, required: true, trim: true, maxlength: 80 },
     email: {
       type: String,
-      required: [true, "Email is required"],
+      required: true,
       unique: true,
       lowercase: true,
       trim: true,
       match: [/^\S+@\S+\.\S+$/, "Please provide a valid email"],
     },
-    passwordHash: {
-      type: String,
-      required: true,
-      select: false, // never returned by default
-    },
-    weeklyGoalMinutes: {
-      type: Number,
-      default: 150,
-      min: 0,
-      max: 10000,
-    },
+    passwordHash: { type: String, required: true, select: false },
+
+    // "user" can buy and study courses; "admin" can create them.
+    role: { type: String, enum: ["user", "admin"], default: "user" },
+
+    // Courses this user is enrolled in.
+    subscription: [{ type: mongoose.Schema.Types.ObjectId, ref: "Course" }],
   },
   { timestamps: true }
 );
 
-// Hash a plaintext password and store it. Call before save.
+// Hash and store a plaintext password.
 userSchema.methods.setPassword = async function (plainPassword) {
   const salt = await bcrypt.genSalt(10);
   this.passwordHash = await bcrypt.hash(plainPassword, salt);
@@ -42,13 +33,14 @@ userSchema.methods.comparePassword = function (plainPassword) {
   return bcrypt.compare(plainPassword, this.passwordHash);
 };
 
-// Shape returned to clients — never leak the hash.
+// Safe shape to send to the client — never leak the password hash.
 userSchema.methods.toPublicJSON = function () {
   return {
     id: this._id,
     name: this.name,
     email: this.email,
-    weeklyGoalMinutes: this.weeklyGoalMinutes,
+    role: this.role,
+    subscription: this.subscription,
     createdAt: this.createdAt,
   };
 };

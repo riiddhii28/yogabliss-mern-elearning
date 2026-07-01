@@ -1,0 +1,59 @@
+.site-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 40px;
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
+  backdrop-filter: blur(8px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.site-header .logo {
+  display: flex;
+  align-items: center;
+  font-size: 28px;
+  font-weight: 700;
+  color: #145a32;
+}
+.site-header .logo-image {
+  width: 44px;
+  height: auto;
+  margin-right: 10px;
+}
+
+.site-header .links {
+  display: flex;
+  align-items: center;
+  gap: 2.2rem;
+}
+.site-header .links a,
+.site-header .link-btn {
+  font-size: 17px;
+  font-weight: 500;
+  color: #333;
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s, transform 0.2s;
+}
+.site-header .links a:hover,
+.site-header .link-btn:hover {
+  color: #388e3c;
+  transform: scale(1.05);
+}
+
+@media (max-width: 640px) {
+  .site-header {
+    flex-direction: column;
+    gap: 12px;
+    padding: 14px 20px;
+  }
+  .site-header .links {
+    gap: 1.2rem;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}

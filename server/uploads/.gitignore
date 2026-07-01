@@ -1,0 +1,7 @@
+# Keep the seed media (used by the demo) but ignore anything uploaded at runtime.
+*
+!.gitignore
+!course-1.jpg
+!course-2.jpg
+!course-3.jpg
+!sample-lecture.mp4
