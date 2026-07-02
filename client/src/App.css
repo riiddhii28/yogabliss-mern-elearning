@@ -1,3 +1,35 @@
+/* ---- Design tokens ---- */
+:root {
+  --green: #145a32;
+  --green-mid: #2e7d46;
+  --green-bright: #43a047;
+  --purple: #8a4baf;
+  --purple-deep: #5f357e;
+
+  --ink: #1f2a24;
+  --muted: #5f6b64;
+  --line: #e6efe9;
+  --tint: #f4faf6;
+  --surface: #ffffff;
+
+  --grad-brand: linear-gradient(120deg, #145a32 0%, #2e7d46 55%, #8a4baf 130%);
+  --grad-soft: linear-gradient(135deg, #e9f7ee 0%, #eee7f6 100%);
+
+  --shadow-sm: 0 1px 3px rgba(20, 40, 30, 0.08);
+  --shadow-md: 0 8px 24px rgba(20, 60, 40, 0.10);
+  --shadow-lg: 0 18px 42px rgba(20, 60, 40, 0.16);
+
+  --r-sm: 10px;
+  --r-md: 16px;
+  --r-lg: 24px;
+  --r-pill: 999px;
+
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display: "Poppins", "Inter", system-ui, sans-serif;
+
+  --nav-h: 72px;
+}
+
 /* ---- Base ---- */
 * {
   margin: 0;
@@ -5,10 +37,23 @@
   box-sizing: border-box;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 body {
-  font-family: "Segoe UI", Arial, sans-serif;
-  color: #222;
-  background: #ffffff;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--surface);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  line-height: 1.55;
+}
+
+h1, h2, h3, .logo {
+  font-family: var(--font-display);
+  font-weight: 700;
+  line-height: 1.15;
 }
 
 a {
@@ -27,50 +72,74 @@ a {
   flex: 1;
 }
 
-/* Shared button — green primary action used across the app. */
+/* Shared button — brand gradient primary action used across the app. */
 .common-btn {
-  background-color: #145a32;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: var(--green);
   color: #fff;
-  padding: 10px 22px;
+  padding: 12px 26px;
   border: none;
-  border-radius: 30px;
-  font-size: 16px;
+  border-radius: var(--r-pill);
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0.2px;
   cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 6px 16px rgba(20, 90, 50, 0.28);
+  transition: transform 0.18s ease, box-shadow 0.25s ease, filter 0.25s ease;
 }
 .common-btn:hover {
-  background-color: #388e3c;
-  transform: scale(1.04);
+  transform: translateY(-2px);
+  box-shadow: 0 10px 24px rgba(20, 90, 50, 0.34);
+  filter: brightness(1.05);
+}
+.common-btn:active {
+  transform: translateY(0);
 }
 .common-btn.danger {
-  background-color: #c0392b;
-}
-.common-btn.danger:hover {
-  background-color: #a93226;
+  background: #c0392b;
+  box-shadow: 0 6px 16px rgba(192, 57, 43, 0.28);
 }
 .common-btn:disabled {
-  opacity: 0.6;
+  opacity: 0.55;
   cursor: not-allowed;
   transform: none;
+  box-shadow: none;
+  filter: grayscale(0.2);
 }
 
 /* A soft purple accent button (from the original theme). */
 .accent-btn {
-  background-color: #8a4baf;
-}
-.accent-btn:hover {
-  background-color: #5f357e;
+  background: var(--purple);
+  box-shadow: 0 6px 16px rgba(138, 75, 175, 0.28);
 }
 
 .page {
-  max-width: 1100px;
+  max-width: 1140px;
   margin: 0 auto;
-  padding: 60px 20px;
+  padding: 64px 22px;
+  /* Fill the viewport below the navbar so short pages don't leave the footer floating. */
+  min-height: calc(100vh - var(--nav-h));
 }
 
 .section-title {
-  font-size: 32px;
-  color: #145a32;
+  font-size: 36px;
+  font-weight: 800;
+  color: var(--green);
   text-align: center;
-  margin-bottom: 30px;
+  margin-bottom: 38px;
+  letter-spacing: -0.8px;
+}
+/* Little brand underline under section titles. */
+.section-title::after {
+  content: "";
+  display: block;
+  width: 64px;
+  height: 4px;
+  margin: 14px auto 0;
+  border-radius: var(--r-pill);
+  background-image: var(--grad-brand);
 }

@@ -37,16 +37,17 @@ export default function CourseStudy() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
-  async function markComplete(lectureId) {
-    await api.post(`/courses/${id}/progress`, { lectureId });
-    const { data } = await api.get(`/courses/${id}/progress`);
+  const isDone = (lectureId) => progress.completedLectures.includes(lectureId);
+
+  async function markComplete(lectureId, { auto = false } = {}) {
+    if (isDone(lectureId)) return;
+    // The POST returns the updated progress — no second request needed.
+    const { data } = await api.post(`/courses/${id}/progress`, { lectureId });
     setProgress(data);
-    toast.success("Marked as complete");
+    toast.success(auto ? "Lecture completed ✓" : "Marked as complete");
   }
 
   if (loading) return <Loading />;
-
-  const isDone = (lectureId) => progress.completedLectures.includes(lectureId);
 
   return (
     <div className="page">
@@ -66,7 +67,13 @@ export default function CourseStudy() {
         <div className="player">
           {active ? (
             <>
-              <video src={mediaUrl(active.video)} controls className="video" />
+              <video
+                src={mediaUrl(active.video)}
+                controls
+                className="video"
+                // Auto-complete when the video plays to the end.
+                onEnded={() => markComplete(active._id, { auto: true })}
+              />
               <h2>{active.title}</h2>
               <p className="lec-desc">{active.description}</p>
               <button

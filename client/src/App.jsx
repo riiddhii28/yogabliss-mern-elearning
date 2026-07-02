@@ -1,3 +1,4 @@
+import { lazy, Suspense } from "react";
 import { Routes, Route, Navigate } from "react-router-dom";
 import { UserData } from "./context/UserContext.jsx";
 import Header from "./components/Header.jsx";
@@ -11,7 +12,9 @@ import CourseStudy from "./pages/CourseStudy.jsx";
 import Account from "./pages/Account.jsx";
 import Login from "./pages/Login.jsx";
 import Register from "./pages/Register.jsx";
-import Admin from "./pages/Admin.jsx";
+
+// Code-split the admin panel — regular visitors never download it.
+const Admin = lazy(() => import("./pages/Admin.jsx"));
 
 export default function App() {
   const { isAuth, user, loading } = UserData();
@@ -39,7 +42,15 @@ export default function App() {
 
           <Route
             path="/admin"
-            element={isAuth && user?.role === "admin" ? <Admin /> : <Navigate to="/" replace />}
+            element={
+              isAuth && user?.role === "admin" ? (
+                <Suspense fallback={<Loading />}>
+                  <Admin />
+                </Suspense>
+              ) : (
+                <Navigate to="/" replace />
+              )
+            }
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import toast from "react-hot-toast";
-import api, { mediaUrl } from "../api.js";
+import api, { thumbUrl } from "../api.js";
 import { UserData } from "../context/UserContext.jsx";
 import Loading from "../components/Loading.jsx";
 import "./CourseDescription.css";
@@ -39,7 +39,7 @@ export default function CourseDescription() {
   return (
     <div className="page">
       <div className="course-description">
-        <img src={mediaUrl(course.image)} alt={course.title} className="cd-image" />
+        <img src={thumbUrl(course.image, 900)} alt={course.title} className="cd-image" />
         <div className="cd-body">
           <h2>{course.title}</h2>
           <p className="cd-meta">

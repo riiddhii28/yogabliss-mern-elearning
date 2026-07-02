@@ -31,6 +31,38 @@ router.get(
   })
 );
 
+// GET /api/courses/mine/progress — progress for every enrolled course, in one call.
+// Powers the Account page bars and the "continue watching" banner.
+router.get(
+  "/mine/progress",
+  requireAuth,
+  asyncHandler(async (req, res) => {
+    const courseIds = req.user.subscription;
+    const [progresses, counts] = await Promise.all([
+      Progress.find({ user: req.user._id, course: { $in: courseIds } }),
+      Lecture.aggregate([
+        { $match: { course: { $in: courseIds } } },
+        { $group: { _id: "$course", total: { $sum: 1 } } },
+      ]),
+    ]);
+
+    const totals = Object.fromEntries(counts.map((c) => [String(c._id), c.total]));
+    const progress = {};
+    for (const courseId of courseIds) {
+      const key = String(courseId);
+      const record = progresses.find((p) => p.course.equals(courseId));
+      const total = totals[key] || 0;
+      const completed = record ? record.completedLectures.length : 0;
+      progress[key] = {
+        percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
+        completed,
+        total,
+      };
+    }
+    res.json({ progress });
+  })
+);
+
 // GET /api/courses/:id — single course details.
 router.get(
   "/:id",
@@ -77,20 +109,35 @@ router.get(
   })
 );
 
+// Shape a progress record + lecture total into the payload the client renders.
+function progressPayload(progress, total) {
+  const completed = progress ? progress.completedLectures.length : 0;
+  return {
+    percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
+    completed,
+    total,
+    completedLectures: progress ? progress.completedLectures : [],
+  };
+}
+
 // POST /api/courses/:id/progress — mark a lecture as completed.
+// Returns the updated progress so the client doesn't need a second request.
 router.post(
   "/:id/progress",
   requireAuth,
   asyncHandler(async (req, res) => {
     const { lectureId } = req.body;
-    const progress = await Progress.findOne({ user: req.user._id, course: req.params.id });
+    const [progress, total] = await Promise.all([
+      Progress.findOne({ user: req.user._id, course: req.params.id }),
+      Lecture.countDocuments({ course: req.params.id }),
+    ]);
     if (!progress) return res.status(404).json({ error: "No progress record — enroll first" });
 
     if (!progress.completedLectures.some((id) => id.equals(lectureId))) {
       progress.completedLectures.push(lectureId);
       await progress.save();
     }
-    res.json({ message: "Progress saved" });
+    res.json({ message: "Progress saved", ...progressPayload(progress, total) });
   })
 );
 
@@ -99,17 +146,11 @@ router.get(
   "/:id/progress",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const progress = await Progress.findOne({ user: req.user._id, course: req.params.id });
-    const total = await Lecture.countDocuments({ course: req.params.id });
-    const completed = progress ? progress.completedLectures.length : 0;
-    const percentage = total === 0 ? 0 : Math.round((completed / total) * 100);
-
-    res.json({
-      percentage,
-      completed,
-      total,
-      completedLectures: progress ? progress.completedLectures : [],
-    });
+    const [progress, total] = await Promise.all([
+      Progress.findOne({ user: req.user._id, course: req.params.id }),
+      Lecture.countDocuments({ course: req.params.id }),
+    ]);
+    res.json(progressPayload(progress, total));
   })
 );
 

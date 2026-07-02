@@ -8,9 +8,15 @@ export default function Account() {
   const { user, logout } = UserData();
   const navigate = useNavigate();
   const [myCourses, setMyCourses] = useState([]);
+  const [progress, setProgress] = useState({}); // courseId -> { percentage, completed, total }
 
   useEffect(() => {
-    api.get("/courses/mine").then(({ data }) => setMyCourses(data.courses));
+    Promise.all([api.get("/courses/mine"), api.get("/courses/mine/progress")]).then(
+      ([coursesRes, progressRes]) => {
+        setMyCourses(coursesRes.data.courses);
+        setProgress(progressRes.data.progress);
+      }
+    );
   }, []);
 
   return (
@@ -33,7 +39,9 @@ export default function Account() {
       </h3>
       <div className="course-grid">
         {myCourses.length > 0 ? (
-          myCourses.map((c) => <CourseCard key={c._id} course={c} />)
+          myCourses.map((c) => (
+            <CourseCard key={c._id} course={c} progress={progress[c._id]} />
+          ))
         ) : (
           <p style={{ color: "#666" }}>You haven't enrolled in any courses yet.</p>
         )}

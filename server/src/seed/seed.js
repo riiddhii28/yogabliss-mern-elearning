@@ -2,11 +2,22 @@
 // Creates an admin, a demo learner, a few courses, and video lectures.
 import "dotenv/config";
 import mongoose from "mongoose";
+import { readFile } from "fs/promises";
 import { connectDB } from "../config/db.js";
+import { cloudinaryEnabled, uploadBuffer } from "../config/cloudinary.js";
 import User from "../models/User.js";
 import Course from "../models/Course.js";
 import Lecture from "../models/Lecture.js";
 import Progress from "../models/Progress.js";
+
+// Resolve a seed asset to { url, publicId }. In production (Cloudinary configured)
+// the local demo file is uploaded to the CDN so it persists; in dev we keep the path.
+async function seedAsset(localPath) {
+  if (!cloudinaryEnabled) return { url: localPath, publicId: "" };
+  const buffer = await readFile(localPath);
+  const result = await uploadBuffer(buffer, { resourceType: "auto" });
+  return { url: result.secure_url, publicId: result.public_id };
+}
 
 const COURSES = [
   {
@@ -62,20 +73,26 @@ async function run() {
   await learner.setPassword("demo123");
   await learner.save();
 
+  // Upload the shared sample video once and reuse it across lectures.
+  const sampleVideo = await seedAsset("uploads/sample-lecture.mp4");
+
   // Courses + one sample video lecture each.
   for (const data of COURSES) {
-    const course = await Course.create(data);
+    const cover = await seedAsset(data.image);
+    const course = await Course.create({ ...data, image: cover.url, imageId: cover.publicId });
     await Lecture.insertMany([
       {
         title: "Welcome & Introduction",
         description: "What this course covers and how to get the most from it.",
-        video: "uploads/sample-lecture.mp4",
+        video: sampleVideo.url,
+        videoId: sampleVideo.publicId,
         course: course._id,
       },
       {
         title: "Your First Session",
         description: "Follow along with a full guided session.",
-        video: "uploads/sample-lecture.mp4",
+        video: sampleVideo.url,
+        videoId: sampleVideo.publicId,
         course: course._id,
       },
     ]);

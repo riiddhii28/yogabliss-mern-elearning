@@ -7,8 +7,11 @@ const courseSchema = new mongoose.Schema(
     description: { type: String, required: true },
     category: { type: String, default: "General" },
 
-    // Path to the cover image, served from /uploads (e.g. "uploads/course-1.jpg").
+    // Cover image URL. A Cloudinary CDN URL in production, or a local "uploads/..."
+    // path in dev. Served as-is by the client.
     image: { type: String, required: true },
+    // Cloudinary public_id (only set when hosted on Cloudinary) — used to delete it.
+    imageId: { type: String, default: "" },
 
     price: { type: Number, required: true, min: 0 },
     duration: { type: Number, required: true, min: 1 }, // in weeks

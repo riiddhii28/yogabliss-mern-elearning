@@ -4,8 +4,18 @@ import Course from "../models/Course.js";
 import Lecture from "../models/Lecture.js";
 import User from "../models/User.js";
 import { requireAuth, requireAdmin } from "../middleware/auth.js";
-import { uploadFile } from "../middleware/upload.js";
+import { uploadFile, storeUpload } from "../middleware/upload.js";
+import { cloudinaryEnabled, destroyAsset } from "../config/cloudinary.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+
+// Remove a stored asset: from Cloudinary (by public_id) in prod, or from disk in dev.
+async function removeAsset(url, publicId, resourceType = "image") {
+  if (cloudinaryEnabled) {
+    await destroyAsset(publicId, resourceType);
+  } else if (url) {
+    await rm(url).catch(() => {}); // url is the local "uploads/<name>" path in dev
+  }
+}
 
 const router = Router();
 
@@ -16,9 +26,10 @@ router.use(requireAuth, requireAdmin);
 router.post(
   "/courses",
   uploadFile,
+  storeUpload,
   asyncHandler(async (req, res) => {
     const { title, description, category, createdBy, duration, price } = req.body;
-    if (!req.file) return res.status(400).json({ error: "Cover image is required" });
+    if (!req.uploaded) return res.status(400).json({ error: "Cover image is required" });
 
     const course = await Course.create({
       title,
@@ -27,7 +38,8 @@ router.post(
       createdBy,
       duration,
       price,
-      image: req.file.path, // e.g. "uploads/<uuid>.jpg"
+      image: req.uploaded.url, // Cloudinary URL (prod) or "uploads/<uuid>.jpg" (dev)
+      imageId: req.uploaded.publicId,
     });
     res.status(201).json({ message: "Course created", course });
   })
@@ -37,15 +49,17 @@ router.post(
 router.post(
   "/courses/:id/lectures",
   uploadFile,
+  storeUpload,
   asyncHandler(async (req, res) => {
     const course = await Course.findById(req.params.id);
     if (!course) return res.status(404).json({ error: "Course not found" });
-    if (!req.file) return res.status(400).json({ error: "Video file is required" });
+    if (!req.uploaded) return res.status(400).json({ error: "Video file is required" });
 
     const lecture = await Lecture.create({
       title: req.body.title,
       description: req.body.description || "",
-      video: req.file.path,
+      video: req.uploaded.url,
+      videoId: req.uploaded.publicId,
       course: course._id,
     });
     res.status(201).json({ message: "Lecture added", lecture });
@@ -58,7 +72,7 @@ router.delete(
   asyncHandler(async (req, res) => {
     const lecture = await Lecture.findById(req.params.id);
     if (!lecture) return res.status(404).json({ error: "Lecture not found" });
-    await rm(lecture.video).catch(() => {}); // remove the file, ignore if missing
+    await removeAsset(lecture.video, lecture.videoId, "video");
     await lecture.deleteOne();
     res.json({ message: "Lecture deleted" });
   })
@@ -72,8 +86,8 @@ router.delete(
     if (!course) return res.status(404).json({ error: "Course not found" });
 
     const lectures = await Lecture.find({ course: course._id });
-    await Promise.all(lectures.map((l) => rm(l.video).catch(() => {})));
-    await rm(course.image).catch(() => {});
+    await Promise.all(lectures.map((l) => removeAsset(l.video, l.videoId, "video")));
+    await removeAsset(course.image, course.imageId, "image");
 
     await Lecture.deleteMany({ course: course._id });
     await course.deleteOne();

@@ -2,6 +2,8 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import morgan from "morgan";
+import compression from "compression";
+import rateLimit from "express-rate-limit";
 
 import authRoutes from "./routes/auth.js";
 import courseRoutes from "./routes/courses.js";
@@ -13,7 +15,11 @@ export function createApp() {
 
   // Allow images/videos to load cross-origin (frontend and API are on different hosts).
   app.use(helmet({ crossOriginResourcePolicy: false }));
+  app.use(compression()); // gzip JSON responses — matters on slow free-tier dynos
   app.use(express.json());
+
+  // Render/Heroku sit behind a proxy; needed so rate limiting sees real client IPs.
+  if (process.env.NODE_ENV === "production") app.set("trust proxy", 1);
 
   const origins = (process.env.CLIENT_ORIGIN || "http://localhost:5173")
     .split(",")
@@ -26,6 +32,17 @@ export function createApp() {
   app.use("/uploads", express.static("uploads"));
 
   app.get("/api/health", (req, res) => res.json({ status: "ok" }));
+
+  // Brute-force protection: 20 login/register attempts per 15 minutes per IP.
+  // (Scoped to those two routes only — /auth/me runs on every page load.)
+  const authLimiter = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 20,
+    standardHeaders: true,
+    legacyHeaders: false,
+    message: { error: "Too many attempts, please try again in 15 minutes" },
+  });
+  app.use(["/api/auth/login", "/api/auth/register"], authLimiter);
 
   app.use("/api/auth", authRoutes);
   app.use("/api/courses", courseRoutes);

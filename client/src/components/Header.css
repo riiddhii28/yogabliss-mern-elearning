@@ -2,10 +2,12 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 16px 40px;
-  background: rgba(255, 255, 255, 0.75);
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.12);
-  backdrop-filter: blur(8px);
+  height: var(--nav-h);
+  padding: 0 44px;
+  background: rgba(255, 255, 255, 0.85);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 14px rgba(20, 60, 40, 0.06);
+  backdrop-filter: blur(14px);
   position: sticky;
   top: 0;
   z-index: 100;
@@ -14,12 +16,14 @@
 .site-header .logo {
   display: flex;
   align-items: center;
-  font-size: 28px;
-  font-weight: 700;
-  color: #145a32;
+  font-family: var(--font-display);
+  font-size: 27px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+  color: var(--green);
 }
 .site-header .logo-image {
-  width: 44px;
+  width: 42px;
   height: auto;
   margin-right: 10px;
 }
@@ -27,22 +31,43 @@
 .site-header .links {
   display: flex;
   align-items: center;
-  gap: 2.2rem;
+  gap: 2rem;
 }
 .site-header .links a,
 .site-header .link-btn {
-  font-size: 17px;
-  font-weight: 500;
-  color: #333;
+  position: relative;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.6px;
+  color: var(--ink);
   background: none;
   border: none;
   cursor: pointer;
-  transition: color 0.3s, transform 0.2s;
+  padding: 4px 0;
+  transition: color 0.25s;
 }
-.site-header .links a:hover,
+/* Animated underline grows from the left on hover. */
+.site-header .links a::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -2px;
+  width: 0;
+  height: 2px;
+  border-radius: var(--r-pill);
+  background-image: var(--grad-brand);
+  transition: width 0.28s ease;
+}
+.site-header .links a:hover {
+  color: var(--green);
+}
+.site-header .links a:hover::after {
+  width: 100%;
+}
 .site-header .link-btn:hover {
-  color: #388e3c;
-  transform: scale(1.05);
+  color: var(--purple-deep);
 }
 
 @media (max-width: 640px) {
