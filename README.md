@@ -171,13 +171,3 @@ the database stores only URLs. Full step-by-step guide with every env var:
 
 > Render's free service sleeps after 15 min idle; the first request wakes it in ~30s.
 
-## 📝 Notes
-
-- The original project used **Razorpay** payments and **email OTP** — replaced with free
-  enrollment and direct signup so everything runs without paid services. The `/enroll`
-  route is the hook point to add payments back.
-- Upload size cap: **200MB** per file (`server/src/middleware/upload.js`).
-
-## License
-
-MIT
