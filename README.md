@@ -1,12 +1,10 @@
 # 🧘 YogaBliss
 
-> An online yoga studio built on the **MERN stack** — browse courses, enroll free, follow
-> on-demand **video lectures**, and track your progress. Includes a full **admin panel**
-> for creating courses and uploading lecture videos.
+**🔗 Live:** [https://yogabliss-mern-elearning.vercel.app/](https://yogabliss-mern-elearning.vercel.app/)
 
-<p align="center">
-  <b>React + Vite</b> · <b>Express API</b> · <b>MongoDB</b> · <b>JWT Auth</b> · <b>Cloudinary media</b>
-</p>
+> An online yoga studio built on the **MERN stack** — browse courses, enroll free, follow on-demand **video lectures**, and track your progress. Includes a full **admin panel** for creating courses and uploading lecture videos.
+
+**React + Vite** · **Express API** · **MongoDB** · **JWT Auth** · **Cloudinary media**
 
 ---
 
@@ -34,7 +32,7 @@
 - 🎨 **Polished UI** — full-screen hero, bold Poppins/Inter typography, solid buttons,
   card hover effects, engagement CTA band, responsive throughout
 
-## 🧰 Tech stack (and why each piece)
+## 🧰 Tech stack 
 
 | Layer | Tech | Why |
 | --- | --- | --- |
@@ -52,7 +50,7 @@
 | Styling | Plain **CSS** with design tokens | Poppins/Inter fonts, green+purple theme, no framework needed |
 | Hosting | **Atlas · Cloudinary · Render · Vercel** | Everything runs on free tiers ([DEPLOY.md](DEPLOY.md)) |
 
-## 🗺️ How it fits together (10-second version)
+## 🗺️ How it fits together 
 
 ```
 Browser (React :5173) ──axios──► Express API (:5000) ──mongoose──► MongoDB
@@ -131,7 +129,7 @@ cp .env.example .env      # VITE_SERVER=http://localhost:5000
 npm run dev               # → http://localhost:5173
 ```
 
-### 3. Demo logins (created by the seed)
+### 3. Demo logins 
 
 | Role | Email | Password |
 | --- | --- | --- |
