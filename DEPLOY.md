@@ -76,7 +76,9 @@ git push -u origin main
 
    > `render.yaml` already lists these — a Render **Blueprint** deploy will prompt for them.
 4. Deploy. When it's live, note the URL, e.g. `https://yogabliss-api.onrender.com`.
-5. **Seed the demo data (once):** Render dashboard → your service → **Shell** →
+5. **Seed the demo data (once, locally):** Render's free plan has no dashboard shell.
+   In your local `server/.env`, set `MONGO_URI` and the three Cloudinary values to
+   the same values used on Render, then run from the local `server` directory:
    ```bash
    npm run seed
    ```

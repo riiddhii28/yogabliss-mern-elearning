@@ -108,6 +108,9 @@ npm run seed              # demo admin, learner, courses + lectures
 npm run dev               # → http://localhost:5000
 ```
 
+> **Warning:** `npm run seed` deletes existing users, courses, lectures, and progress.
+> Run it only against a disposable/demo database.
+
 `server/.env` essentials:
 
 ```ini
