@@ -1,4 +1,6 @@
 import { v2 as cloudinary } from "cloudinary";
+import { randomUUID } from "node:crypto";
+import { httpError } from "../utils/httpError.js";
 
 // Cloudinary is optional: if these env vars are set (production), uploads go to
 // Cloudinary's CDN and persist. If not (local dev), we fall back to disk storage.
@@ -21,8 +23,8 @@ if (cloudinaryEnabled) {
 export function uploadBuffer(buffer, { folder = "yogabliss", resourceType = "auto" } = {}) {
   return new Promise((resolve, reject) => {
     const stream = cloudinary.uploader.upload_stream(
-      { folder, resource_type: resourceType },
-      (err, result) => (err ? reject(err) : resolve(result))
+      { folder, public_id: randomUUID(), overwrite: false, resource_type: resourceType },
+      (err, result) => (err ? reject(httpError(502, "Media upload failed. Please retry.")) : resolve(result))
     );
     stream.end(buffer);
   });
@@ -30,8 +32,13 @@ export function uploadBuffer(buffer, { folder = "yogabliss", resourceType = "aut
 
 // Delete a previously uploaded asset by its public_id.
 export async function destroyAsset(publicId, resourceType = "image") {
-  if (!cloudinaryEnabled || !publicId) return;
-  await cloudinary.uploader.destroy(publicId, { resource_type: resourceType }).catch(() => {});
+  if (!cloudinaryEnabled || !publicId) throw httpError(503, "Media storage is unavailable");
+  try {
+    const result = await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
+    if (!["ok", "not found"].includes(result.result)) throw new Error("Deletion not confirmed");
+  } catch {
+    throw httpError(502, "Media cleanup failed. Please retry deletion.");
+  }
 }
 
 export default cloudinary;

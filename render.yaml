@@ -12,6 +12,8 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
+      - key: MAINTENANCE_READ_ONLY
+        value: "false"
       - key: JWT_EXPIRES_IN
         value: 7d
       - key: MONGO_URI

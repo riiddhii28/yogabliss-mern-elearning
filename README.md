@@ -132,12 +132,13 @@ cp .env.example .env      # VITE_SERVER=http://localhost:5000
 npm run dev               # → http://localhost:5173
 ```
 
-### 3. Demo logins 
+### 3. Accounts
 
-| Role | Email | Password |
-| --- | --- | --- |
-| Learner | `demo@yogabliss.com` | `demo123` |
-| Admin | `admin@yogabliss.com` | `admin123` |
+Create a learner account through **Sign up**. No shared login credentials are published.
+
+For an explicitly requested **local** seed, configure `SEED_ADMIN_EMAIL`, `SEED_ADMIN_PASSWORD`, `SEED_LEARNER_EMAIL`, and `SEED_LEARNER_PASSWORD`. Both passwords must contain at least 12 characters; the email addresses must differ. Optional `SEED_ADMIN_NAME` and `SEED_LEARNER_NAME` set display names.
+
+Admin access is private. The formerly published admin password is blocked from admin APIs; existing installations must rotate that account’s password manually and rotate `JWT_SECRET` to invalidate previously issued tokens. The seed deletes existing data: never run it against production or use it to rotate credentials.
 
 ## 📡 API reference
 

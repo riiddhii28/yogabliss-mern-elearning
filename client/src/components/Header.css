@@ -2,8 +2,10 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  height: var(--nav-h);
-  padding: 0 44px;
+  min-height: var(--nav-h);
+  padding: 12px 28px;
+  flex-wrap: wrap;
+  gap: 12px 24px;
   background: rgba(255, 255, 255, 0.85);
   border-bottom: 1px solid var(--line);
   box-shadow: 0 2px 14px rgba(20, 60, 40, 0.06);
@@ -31,7 +33,8 @@
 .site-header .links {
   display: flex;
   align-items: center;
-  gap: 2rem;
+  gap: 8px 20px;
+  flex-wrap: wrap;
 }
 .site-header .links a,
 .site-header .link-btn {
@@ -45,7 +48,7 @@
   background: none;
   border: none;
   cursor: pointer;
-  padding: 4px 0;
+  padding: 10px 0;
   transition: color 0.25s;
 }
 /* Animated underline grows from the left on hover. */
@@ -69,15 +72,17 @@
 .site-header .link-btn:hover {
   color: var(--purple-deep);
 }
+.site-header .links a.active { color: var(--green); text-decoration: underline; text-underline-offset: 6px; }
 
 @media (max-width: 640px) {
   .site-header {
+    position: relative;
     flex-direction: column;
     gap: 12px;
     padding: 14px 20px;
   }
   .site-header .links {
-    gap: 1.2rem;
+    gap: 4px 16px;
     flex-wrap: wrap;
     justify-content: center;
   }

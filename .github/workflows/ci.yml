@@ -1,4 +1,4 @@
-# Runs on every push/PR: makes sure both apps install and the client builds.
+# Runs isolated tests and builds without production secrets.
 # Keeps a broken commit from reaching the Render/Vercel auto-deploys.
 name: CI
 
@@ -9,7 +9,7 @@ on:
 
 jobs:
   client:
-    name: Client (Vite build)
+    name: Client (tests and build)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -22,10 +22,11 @@ jobs:
           cache: npm
           cache-dependency-path: client/package-lock.json
       - run: npm ci
+      - run: npm test
       - run: npm run build
 
   server:
-    name: Server (syntax check)
+    name: Server (tests and checks)
     runs-on: ubuntu-latest
     defaults:
       run:
@@ -38,5 +39,5 @@ jobs:
           cache: npm
           cache-dependency-path: server/package-lock.json
       - run: npm ci
-      # Parse every module to catch syntax/import errors without needing a DB.
-      - run: for f in $(find src -name '*.js'); do node --check "$f"; done
+      - run: npm test
+      - run: npm run check

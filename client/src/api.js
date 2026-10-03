@@ -20,12 +20,16 @@ export const thumbUrl = (path, width = 600) => {
   return url.replace("/upload/", `/upload/w_${width},c_limit,f_auto,q_auto/`);
 };
 
-const api = axios.create({ baseURL: `${server}/api` });
+// Bound requests so a stalled API ends in a retryable state (including cold starts).
+const api = axios.create({ baseURL: `${server}/api`, timeout: 60000 });
 
 // Attach the saved JWT to every request.
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("yb_token");
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+    config.sessionToken = token;
+  }
   return config;
 });
 

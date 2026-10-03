@@ -8,9 +8,10 @@
 **Live API:** https://yogabliss-api.onrender.com
 **Repo:** https://github.com/riiddhii28/yogabliss-mern-elearning
 
-**Demo logins**
-- Admin → `admin@yogabliss.com` / `admin123`
-- User → `demo@yogabliss.com` / `demo123`
+**Accounts**
+- Create a learner account through Sign up; admin access is private.
+- Local seed accounts use `SEED_ADMIN_EMAIL` / `SEED_ADMIN_PASSWORD` and `SEED_LEARNER_EMAIL` / `SEED_LEARNER_PASSWORD` (12+ characters each). Optional `SEED_ADMIN_NAME` and `SEED_LEARNER_NAME` set display names.
+- The seed deletes existing data. Never run it against production or use it to rotate credentials. The formerly published admin password is blocked by the API.
 
 ---
 

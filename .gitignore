@@ -3,8 +3,8 @@ node_modules/
 
 # Environment
 .env
-.env.local
-.env.*.local
+.env.*
+!.env.example
 
 # Build output
 client/dist/
@@ -21,3 +21,12 @@ npm-debug.log*
 
 # Misc
 coverage/
+
+# Local test output
+.test-tmp/
+test-results/
+
+# Private migration exports/manifests (may contain account records)
+.migration-private/
+*.migration-backup.ejson
+*.migration-manifest.json

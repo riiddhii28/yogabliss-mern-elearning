@@ -5,18 +5,26 @@ import Progress from "../models/Progress.js";
 import { requireAuth } from "../middleware/auth.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 
+import { availableCourse, enrolled, enroll, completeLecture, progressPayload } from "../services/progress.js";
+import { assertId } from "../utils/httpError.js";
+
+import { orderedLessons } from "../services/lessonOrder.js";
+
 const router = Router();
+router.param("id", (req, res, next, id) => {
+  try { assertId(id, "course ID"); next(); } catch (error) { next(error); }
+});
 
 // Is this user enrolled in (or an admin for) this course?
 function hasAccess(user, courseId) {
-  return user.role === "admin" || user.subscription.some((id) => id.equals(courseId));
+  return user.role === "admin" || enrolled(user, courseId);
 }
 
 // GET /api/courses — public list of all courses.
 router.get(
   "/",
   asyncHandler(async (req, res) => {
-    const courses = await Course.find().sort({ createdAt: -1 });
+    const courses = await Course.find({ deleting: { $ne: true } }).sort({ createdAt: -1 });
     res.json({ courses });
   })
 );
@@ -26,7 +34,7 @@ router.get(
   "/mine",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const courses = await Course.find({ _id: { $in: req.user.subscription } });
+    const courses = await Course.find({ _id: { $in: req.user.subscription }, deleting: { $ne: true } });
     res.json({ courses });
   })
 );
@@ -38,26 +46,23 @@ router.get(
   requireAuth,
   asyncHandler(async (req, res) => {
     const courseIds = req.user.subscription;
-    const [progresses, counts] = await Promise.all([
+    const [progresses, lectures, courses] = await Promise.all([
       Progress.find({ user: req.user._id, course: { $in: courseIds } }),
-      Lecture.aggregate([
-        { $match: { course: { $in: courseIds } } },
-        { $group: { _id: "$course", total: { $sum: 1 } } },
-      ]),
+      Lecture.find({ course: { $in: courseIds }, deleting: { $ne: true } }).select("_id course"),
+      Course.find({ _id: { $in: courseIds }, deleting: { $ne: true } }).select("_id"),
     ]);
-
-    const totals = Object.fromEntries(counts.map((c) => [String(c._id), c.total]));
+    const records = new Map(progresses.map((p) => [String(p.course), p]));
+    const curricula = new Map();
+    for (const lecture of lectures) {
+      const key = String(lecture.course);
+      if (!curricula.has(key)) curricula.set(key, []);
+      curricula.get(key).push(lecture);
+    }
     const progress = {};
-    for (const courseId of courseIds) {
-      const key = String(courseId);
-      const record = progresses.find((p) => p.course.equals(courseId));
-      const total = totals[key] || 0;
-      const completed = record ? record.completedLectures.length : 0;
-      progress[key] = {
-        percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
-        completed,
-        total,
-      };
+    for (const course of courses) {
+      const key = String(course._id);
+      const { completedLectures, ...summary } = progressPayload(records.get(key), curricula.get(key) || []);
+      progress[key] = summary;
     }
     res.json({ progress });
   })
@@ -67,9 +72,17 @@ router.get(
 router.get(
   "/:id",
   asyncHandler(async (req, res) => {
-    const course = await Course.findById(req.params.id);
-    if (!course) return res.status(404).json({ error: "Course not found" });
-    res.json({ course });
+    const course = await availableCourse(req.params.id);
+    // Public curriculum metadata only; lesson text/video stays enrollment-gated.
+    const lessons = await orderedLessons(course);
+    const curriculum = lessons.map((lesson) => ({
+      id: lesson._id,
+      title: lesson.title,
+      description: lesson.description,
+      durationMinutes: lesson.durationMinutes,
+      hasVideo: Boolean(lesson.video),
+    }));
+    res.json({ course, curriculum });
   })
 );
 
@@ -79,18 +92,7 @@ router.post(
   "/:id/enroll",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const course = await Course.findById(req.params.id);
-    if (!course) return res.status(404).json({ error: "Course not found" });
-
-    if (req.user.subscription.some((id) => id.equals(course._id))) {
-      return res.status(400).json({ error: "You are already enrolled" });
-    }
-
-    req.user.subscription.push(course._id);
-    await req.user.save();
-
-    // Start a progress record so the dashboard has something to show.
-    await Progress.create({ user: req.user._id, course: course._id, completedLectures: [] });
+    const course = await enroll(req.user, req.params.id);
 
     res.json({ message: "Enrolled successfully", course });
   })
@@ -101,24 +103,14 @@ router.get(
   "/:id/lectures",
   requireAuth,
   asyncHandler(async (req, res) => {
+    const course = await availableCourse(req.params.id);
     if (!hasAccess(req.user, req.params.id)) {
       return res.status(403).json({ error: "Enroll in this course to watch lectures" });
     }
-    const lectures = await Lecture.find({ course: req.params.id }).sort({ createdAt: 1 });
+    const lectures = await orderedLessons(course);
     res.json({ lectures });
   })
 );
-
-// Shape a progress record + lecture total into the payload the client renders.
-function progressPayload(progress, total) {
-  const completed = progress ? progress.completedLectures.length : 0;
-  return {
-    percentage: total === 0 ? 0 : Math.round((completed / total) * 100),
-    completed,
-    total,
-    completedLectures: progress ? progress.completedLectures : [],
-  };
-}
 
 // POST /api/courses/:id/progress — mark a lecture as completed.
 // Returns the updated progress so the client doesn't need a second request.
@@ -126,18 +118,8 @@ router.post(
   "/:id/progress",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const { lectureId } = req.body;
-    const [progress, total] = await Promise.all([
-      Progress.findOne({ user: req.user._id, course: req.params.id }),
-      Lecture.countDocuments({ course: req.params.id }),
-    ]);
-    if (!progress) return res.status(404).json({ error: "No progress record — enroll first" });
-
-    if (!progress.completedLectures.some((id) => id.equals(lectureId))) {
-      progress.completedLectures.push(lectureId);
-      await progress.save();
-    }
-    res.json({ message: "Progress saved", ...progressPayload(progress, total) });
+    const payload = await completeLecture(req.user, req.params.id, req.body?.lectureId);
+    res.json({ message: "Progress saved", ...payload });
   })
 );
 
@@ -146,11 +128,15 @@ router.get(
   "/:id/progress",
   requireAuth,
   asyncHandler(async (req, res) => {
-    const [progress, total] = await Promise.all([
+    await availableCourse(req.params.id);
+    if (!hasAccess(req.user, req.params.id)) {
+      return res.status(403).json({ error: "Enroll in this course first" });
+    }
+    const [progress, lectures] = await Promise.all([
       Progress.findOne({ user: req.user._id, course: req.params.id }),
-      Lecture.countDocuments({ course: req.params.id }),
+      Lecture.find({ course: req.params.id, deleting: { $ne: true } }).select("_id"),
     ]);
-    res.json(progressPayload(progress, total));
+    res.json(progressPayload(progress, lectures));
   })
 );
 

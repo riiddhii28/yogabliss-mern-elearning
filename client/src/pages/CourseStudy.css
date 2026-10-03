@@ -41,7 +41,7 @@
 }
 .player {
   flex: 2;
-  min-width: 300px;
+  min-width: min(300px, 100%);
 }
 .video {
   width: 100%;
@@ -58,16 +58,32 @@
   line-height: 1.6;
   margin-bottom: 16px;
 }
+.lesson-format {
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  background: var(--tint);
+  color: var(--muted);
+  border-radius: var(--r-sm);
+  font-size: 14px;
+}
+.lesson-content {
+  line-height: 1.8;
+  margin-bottom: 24px;
+}
+.lesson-content p + p {
+  margin-top: 16px;
+}
 
 .lecture-list {
   flex: 1;
-  min-width: 240px;
+  min-width: min(240px, 100%);
   background: #f3fbf5;
   border-radius: 12px;
   padding: 16px;
   height: fit-content;
 }
-.lecture-list h3 {
+.lecture-list h2 {
+  font-size: 20px;
   color: #145a32;
   margin-bottom: 12px;
 }
@@ -111,4 +127,13 @@
 .lecture-item .tick {
   color: #145a32;
   font-weight: 700;
+}
+.study-course-title { font-size: 30px; color: var(--green); margin: 0 auto 24px; max-width: 1000px; }
+.lesson-navigation { display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin: 24px 0; }
+.lesson-completed { display: block; font-size: 13px; color: var(--green); margin-top: 4px; }
+.save-notice { color: var(--green); text-align: center; margin-bottom: 20px; }
+@media (max-width: 640px) {
+  .study { flex-direction: column; }
+  .player, .lecture-list { width: 100%; min-width: 0; }
+  .lesson-navigation .common-btn { width: 100%; }
 }

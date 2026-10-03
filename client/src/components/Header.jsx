@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link, NavLink, useNavigate } from "react-router-dom";
 import { UserData } from "../context/UserContext.jsx";
 import "./Header.css";
 
@@ -8,26 +8,27 @@ export default function Header() {
 
   return (
     <header className="site-header">
+      <a className="skip-link" href="#main-content">Skip to content</a>
       <Link to="/" className="logo">
         <img src="/yoga.png" alt="YogaBliss logo" className="logo-image" />
         YogaBliss
       </Link>
 
-      <nav className="links">
-        <Link to="/">Home</Link>
-        <Link to="/courses">Courses</Link>
-        <Link to="/about">About</Link>
+      <nav className="links" aria-label="Main navigation">
+        <NavLink to="/" end>Home</NavLink>
+        <NavLink to="/courses">Courses</NavLink>
+        <NavLink to="/about">About</NavLink>
 
         {isAuth ? (
           <>
-            <Link to="/account">Account</Link>
-            {user?.role === "admin" && <Link to="/admin">Admin</Link>}
+            <NavLink to="/account">Account</NavLink>
+            {user?.role === "admin" && <NavLink to="/admin">Admin</NavLink>}
             <button className="link-btn" onClick={() => logout(navigate)}>
               Logout
             </button>
           </>
         ) : (
-          <Link to="/login">Login</Link>
+          <NavLink to="/login">Login</NavLink>
         )}
       </nav>
     </header>

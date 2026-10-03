@@ -11,15 +11,14 @@ export default function About() {
       />
       <div style={{ maxWidth: 720, margin: "0 auto", color: "#444", lineHeight: 1.8, fontSize: 17 }}>
         <p>
-          YogaBliss is an online yoga studio built to make mindful movement accessible to everyone,
-          everywhere. Whether you are rolling out your mat for the first time or deepening a lifelong
-          practice, our courses meet you where you are.
+          YogaBliss is a free learning demo with short introductions to Hatha yoga, Vinyasa,
+          and meditation. Each course has a small, focused curriculum you can explore at your own pace.
         </p>
         <br />
         <p>
-          Each course is led by experienced instructors and delivered as on-demand video lessons, so
-          you can practise at your own pace. Track your progress, build a routine, and find your calm
-          — one breath at a time.
+          The demo courses contain written lessons and optional practice ideas, not instructor-led
+          videos or professional training. Enroll for free, read the lessons, and track your completion
+          in your account.
         </p>
       </div>
     </div>

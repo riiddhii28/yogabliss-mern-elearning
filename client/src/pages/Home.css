@@ -234,14 +234,6 @@
   box-shadow: 0 8px 22px rgba(0, 0, 0, 0.18);
 }
 
-/* Reused course grid */
-.course-grid {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 28px;
-}
-
 @media (max-width: 640px) {
   .hero-content h1 { font-size: 38px; }
   .hero-content p { font-size: 18px; }

@@ -2,10 +2,12 @@ import { useMemo, useState } from "react";
 import { FiSearch } from "react-icons/fi";
 import { CourseData } from "../context/CourseContext.jsx";
 import CourseCard from "../components/CourseCard.jsx";
+import Loading from "../components/Loading.jsx";
+import ContentState from "../components/ContentState.jsx";
 import "./Courses.css";
 
 export default function Courses() {
-  const { courses } = CourseData();
+  const { courses, loading, error, fetchCourses } = CourseData();
   const [query, setQuery] = useState("");
   const [category, setCategory] = useState("All");
 
@@ -25,6 +27,10 @@ export default function Courses() {
       c.description.toLowerCase().includes(q);
     return matchesCategory && matchesQuery;
   });
+
+  if (loading) return <Loading message="Loading courses…" />;
+  if (error) return <ContentState title="Couldn't load courses" message="Check your connection and try again." error onRetry={fetchCourses} />;
+  if (!courses.length) return <ContentState title="No courses available yet" message="Please check back soon." onRetry={fetchCourses} />;
 
   return (
     <div className="page">
@@ -47,6 +53,7 @@ export default function Courses() {
             <button
               key={cat}
               className={`chip ${category === cat ? "active" : ""}`}
+              aria-pressed={category === cat}
               onClick={() => setCategory(cat)}
             >
               {cat}
@@ -59,11 +66,9 @@ export default function Courses() {
         {visible.length > 0 ? (
           visible.map((c) => <CourseCard key={c._id} course={c} />)
         ) : (
-          <p className="no-results">
-            {courses.length === 0
-              ? "No courses yet."
-              : `No courses match “${query}”. Try a different search.`}
-          </p>
+          <ContentState title="No matching courses" message="Try a different search or category.">
+            <button className="common-btn" onClick={() => { setQuery(""); setCategory("All"); }}>Clear filters</button>
+          </ContentState>
         )}
       </div>
     </div>

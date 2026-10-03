@@ -27,8 +27,9 @@
   margin-bottom: 40px;
 }
 .admin-form {
-  flex: 1;
-  min-width: 300px;
+  flex: 1 1 300px;
+  min-width: 0;
+  max-width: 100%;
   background: #fff;
   border: 1px solid #e5e5e5;
   border-radius: 12px;
@@ -43,6 +44,8 @@
 .admin-form input,
 .admin-form textarea,
 .admin-form select {
+  width: 100%;
+  min-width: 0;
   padding: 10px;
   border: 1px solid #cdd7cf;
   border-radius: 8px;
@@ -84,4 +87,25 @@
 .common-btn.small {
   padding: 6px 14px;
   font-size: 13px;
+}
+.table-scroll { width: 100%; overflow-x: auto; margin-bottom: 24px; }
+.admin-table { min-width: 500px; }
+
+.admin-actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.admin-list { list-style: none; padding: 0; margin: 24px 0; display: grid; gap: 16px; }
+.admin-item { display: flex; align-items: center; flex-wrap: wrap; gap: 18px; padding: 20px; border: 1px solid var(--line); border-radius: var(--r-md); background: var(--surface); }
+.admin-item h3 { color: var(--green); font-size: 20px; margin-bottom: 8px; overflow-wrap: anywhere; }
+.admin-item-body { flex: 1 1 220px; min-width: 0; }
+.admin-cover { width: 120px; height: 80px; object-fit: cover; border-radius: var(--r-sm); }
+.admin-form { margin: 24px 0; }
+.admin-form fieldset { border: 0; min-width: 0; display: grid; gap: 16px; }
+.admin-field { display: grid; gap: 6px; min-width: 0; }
+.admin-field label { font-weight: 600; color: var(--green); }
+.admin-preview { width: 100%; max-width: 360px; max-height: 240px; object-fit: contain; border-radius: var(--r-sm); }
+.admin-notice { margin: 20px 0; padding: 16px; background: var(--tint); color: var(--green); border-radius: var(--r-sm); }
+@media (max-width: 480px) {
+  .admin-item, .admin-form { padding: 16px; }
+  .admin-cover { width: 100%; height: 140px; }
+  .admin-item .admin-actions { width: 100%; }
+  .admin-item .admin-actions button { flex: 1 1 auto; }
 }

@@ -9,13 +9,13 @@
 .cd-image {
   width: 380px;
   max-width: 100%;
-  height: 240px;
+  aspect-ratio: 3 / 2;
   object-fit: cover;
   border-radius: 12px;
 }
 .cd-body {
   flex: 1;
-  min-width: 260px;
+  min-width: min(260px, 100%);
 }
 .cd-body h2 {
   font-size: 28px;
@@ -30,4 +30,33 @@
   color: #444;
   line-height: 1.7;
   margin-bottom: 24px;
+}
+.cd-note {
+  padding: 14px;
+  margin-bottom: 24px;
+  border-radius: var(--r-sm);
+  background: var(--tint);
+  color: var(--muted);
+  line-height: 1.6;
+}
+.course-outline {
+  max-width: 900px;
+  margin: 32px auto 0;
+  line-height: 1.7;
+}
+.course-outline h3 {
+  color: var(--green);
+  margin-bottom: 16px;
+}
+.course-outline ul,
+.course-outline ol {
+  padding-left: 24px;
+}
+.course-outline li {
+  margin-bottom: 12px;
+}
+.curriculum-meta {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
 }

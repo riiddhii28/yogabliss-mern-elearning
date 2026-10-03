@@ -66,25 +66,21 @@ git push -u origin main
    | Key | Value |
    | --- | --- |
    | `NODE_ENV` | `production` |
+   | `MAINTENANCE_READ_ONLY` | `false` normally; exactly `true` to block API writes after restart |
    | `JWT_EXPIRES_IN` | `7d` |
    | `MONGO_URI` | *(from step 1)* |
    | `JWT_SECRET` | a long random string — generate with:<br>`node -e "console.log(require('crypto').randomBytes(48).toString('hex'))"` |
-   | `CLIENT_ORIGIN` | leave blank for now (set in step 5) |
+   | `CLIENT_ORIGIN` | the intended frontend origin (required before production startup) |
    | `CLOUDINARY_CLOUD_NAME` | *(from step 2)* |
    | `CLOUDINARY_API_KEY` | *(from step 2)* |
    | `CLOUDINARY_API_SECRET` | *(from step 2)* |
 
    > `render.yaml` already lists these — a Render **Blueprint** deploy will prompt for them.
 4. Deploy. When it's live, note the URL, e.g. `https://yogabliss-api.onrender.com`.
-5. **Seed the demo data (once, locally):** Render's free plan has no dashboard shell.
-   In your local `server/.env`, set `MONGO_URI` and the three Cloudinary values to
-   the same values used on Render, then run from the local `server` directory:
-   ```bash
-   npm run seed
-   ```
-   Because Cloudinary keys are set, this uploads the demo images + sample video to the
-   CDN and stores their URLs. Logins created: `admin@yogabliss.com / admin123` and
-   `demo@yogabliss.com / demo123`.
+5. **Existing data:** do not run the destructive seed against the deployed database.
+   Use the reviewed, rollback-capable procedure in [the migration plan](docs/MIGRATION_PLAN.md).
+   Admin credentials must remain private; rotate the previously published account password
+   and `JWT_SECRET` before restoring admin access. No migration is executed by tests or CI.
 
 ## 5. Vercel (frontend)
 
@@ -111,6 +107,10 @@ git push -u origin main
 ---
 
 ## Notes & gotchas
+
+- **Migration maintenance.** Follow [the write-block procedure](docs/MAINTENANCE.md).
+  A frontend maintenance page does not prevent direct API writes. The switch is
+  off by default; this documentation does not activate it or authorize migration.
 
 - **First request is slow.** Render's free service sleeps after ~15 min idle and takes
   ~30s to wake. Normal for the free tier.
